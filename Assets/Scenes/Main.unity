@@ -170,6 +170,49 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.1285276, y: 0.84279406}
   m_EdgeRadius: 0
+--- !u!114 &450814106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 450814094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4696937e10289174ab231e98662832ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  speed: 5
+--- !u!114 &450814107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 450814094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  m_NotificationBehavior: 3
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: 
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &905057982
 GameObject:
   m_ObjectHideFlags: 0
@@ -15207,6 +15250,7 @@ GameObject:
   - component: {fileID: 1494234365}
   - component: {fileID: 1494234364}
   - component: {fileID: 1494234363}
+  - component: {fileID: 1494234367}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -15301,7 +15345,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.06
+  orthographic size: 2.8125
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -15325,13 +15369,37 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1494234362}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.94, y: 1.1, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -23.1, y: 0.74, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1494234367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1494234362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.PixelPerfectCamera
+  m_ComponentVersion: 1
+  m_AssetsPPU: 32
+  m_RefResolutionX: 320
+  m_RefResolutionY: 180
+  m_CropFrame: 0
+  m_GridSnapping: 0
+  m_FilterMode: 0
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
 --- !u!1 &1901856218
 GameObject:
   m_ObjectHideFlags: 0
@@ -15391,16 +15459,28 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2056762568563271925, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056762568563271925, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056762568563271925, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
       propertyPath: m_CollisionDetection
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3663304123831857943, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3663304123831857943, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -26.37
       objectReference: {fileID: 0}
     - target: {fileID: 3663304123831857943, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.38
       objectReference: {fileID: 0}
     - target: {fileID: 3663304123831857943, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -15434,6 +15514,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3663304123831857943, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15441,6 +15525,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1061439023441306695, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 450814100}
+    - targetCorrespondingSourceObject: {fileID: 1061439023441306695, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 450814107}
+    - targetCorrespondingSourceObject: {fileID: 1061439023441306695, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 450814106}
   m_SourcePrefab: {fileID: 100100000, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

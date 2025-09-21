@@ -158,7 +158,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.080883026, y: -0.055125177}
+  m_Offset: {x: 0.09, y: -0.055125177}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -187,7 +187,9 @@ MonoBehaviour:
   flipDuration: 0.2
   inputDeadzone: 0.1
   climbSpeed: 4
-  visualsTranform: {fileID: 648308809}
+  colliderOffsetRight: {x: 0.09, y: -0.05512518}
+  colliderOffsetLeft: {x: -0.09, y: -0.05512518}
+  visualsTransform: {fileID: 648308809}
   groundCheck: {fileID: 1521417494}
   groundCheckRadius: 0.27
   groundLayer:

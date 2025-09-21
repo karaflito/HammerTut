@@ -13,14 +13,24 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float inputDeadzone = 0.1f;
     [SerializeField] private float climbSpeed = 1.0f;
 
-    [SerializeField] private Transform visualsTranform;
+    // Collider offsets (for left/right facing)
+    [SerializeField] private Vector2 colliderOffsetRight;
+    [SerializeField] private Vector2 colliderOffsetLeft;
+
+    // Scene references
+    [SerializeField] private Transform visualsTransform;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
+
+    // =========================
+    // State Flags
+    // =========================
     private bool isGrounded;
     private bool isClimbing;
-    private bool isNearClimable;
+    private bool isNearClimbable;
     private float savedGravity = 1f;
+
     // =========================
     // Input
     // =========================
@@ -32,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     // Components
     // =========================
     private Rigidbody2D rb;
+    private BoxCollider2D boxCollider;
     [SerializeField] private Animator animator;
 
     // =========================
@@ -48,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         actions = new PlayerInputActions();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
+        boxCollider = GetComponent<BoxCollider2D>();
     }
 
     private void Update()
@@ -59,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         PlayerMovementVelocity();
-        if (isNearClimable && !isClimbing && Mathf.Abs(climbingInput) > 0.01f)
+        if (isNearClimbable && !isClimbing && Mathf.Abs(climbingInput) > 0.01f)
         {
             StartClimb();
         }
@@ -111,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             return;
         }
-        else if (isNearClimable && isGrounded)
+        else if (isNearClimbable && isGrounded)
         {
             PlayerJumping();
             return;
@@ -149,7 +161,7 @@ public class PlayerMovement : MonoBehaviour
          
         rb.linearVelocity = new Vector2 (rb.linearVelocity.x, climbingInput * climbSpeed);
 
-        if (!isNearClimable) StopClimb();
+        if (!isNearClimbable) StopClimb();
     }
     
     private void StartClimb()
@@ -180,6 +192,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (moveInput > 0 && !facingRight)
             StartSmoothFlip(true);
+            
         else if (moveInput < 0 && facingRight)
             StartSmoothFlip(false);
     }
@@ -190,26 +203,29 @@ public class PlayerMovement : MonoBehaviour
             StopCoroutine(flipCoroutine);
 
         flipCoroutine = StartCoroutine(SmoothFlip(faceRight));
+
+        ApplyColliderOffset(faceRight);
     }
 
     private IEnumerator SmoothFlip(bool faceRight)
     {
         facingRight = faceRight;
 
-        float start = visualsTranform.localScale.x;
+        float start = visualsTransform.localScale.x;
         float end = faceRight ? 1f : -1f;
         float elapsed = 0f;
+       
 
         while (elapsed < flipDuration)
         {
             float newX = Mathf.Lerp(start, end, elapsed / flipDuration);
-            visualsTranform.localScale = new Vector3(newX, 1f, 1f);
+            visualsTransform.localScale = new Vector3(newX, 1f, 1f);
 
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        visualsTranform.localScale = new Vector3(end, 1f, 1f);
+        visualsTransform.localScale = new Vector3(end, 1f, 1f);
         flipCoroutine = null;
     }
     // =========================
@@ -230,7 +246,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if(collision.CompareTag("Climbing"))
         {
-            isNearClimable = true; 
+            isNearClimbable = true; 
         }
         
     }
@@ -239,13 +255,16 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.CompareTag("Climbing"))
         {
-            isNearClimable = false;
+            isNearClimbable = false;
             StopClimb();
         }
     }
 
 
-
+    private void ApplyColliderOffset(bool faceRight)
+    {
+        boxCollider.offset = faceRight ? colliderOffsetRight : colliderOffsetLeft;
+    }
 
 
 

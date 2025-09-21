@@ -11,8 +11,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Ground
+  - Cimbing
   - 
   - 
   - 
@@ -46,6 +46,12 @@ TagManager:
     locked: 0
   - name: ForeGround
     uniqueID: 52791091
+    locked: 0
+  - name: Decorations
+    uniqueID: 3054274681
+    locked: 0
+  - name: Climbing
+    uniqueID: 2768316165
     locked: 0
   - name: Player
     uniqueID: 2012113269

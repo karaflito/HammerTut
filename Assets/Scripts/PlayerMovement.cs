@@ -157,9 +157,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void PlayerClimbing()
     {
-        if (!isClimbing) return;
+        if (!isClimbing)
+        {
+            animator.SetBool("IsClimbing", false);
+            return;
+        }
+            
          
         rb.linearVelocity = new Vector2 (rb.linearVelocity.x, climbingInput * climbSpeed);
+        // Update animation
+        animator.SetBool("IsClimbing", true);
+        animator.SetFloat("ClimbSpeed", Mathf.Abs(climbingInput));
 
         if (!isNearClimbable) StopClimb();
     }

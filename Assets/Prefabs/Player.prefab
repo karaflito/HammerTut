@@ -14,6 +14,11 @@ GameObject:
   - component: {fileID: 4186285919042528651}
   - component: {fileID: 1065668176458978320}
   - component: {fileID: 956910200892657503}
+  - component: {fileID: 6011499619285234035}
+  - component: {fileID: 7417151996246298853}
+  - component: {fileID: 3006945804537969592}
+  - component: {fileID: 325517082683871298}
+  - component: {fileID: 2233316860917331526}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -170,18 +175,77 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   speed: 5
-  jumpForce: 5
+--- !u!114 &6011499619285234035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061439023441306695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e8dd2c6c037e964ab32c76e8f1e7fb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputHandler
+--- !u!114 &7417151996246298853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061439023441306695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf032e0cf6ba4246b7385f8b15cabf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Flippable
+  visualsTransform: {fileID: 8223545448675409767}
   flipDuration: 0.2
-  inputDeadzone: 0.1
-  climbSpeed: 4
   colliderOffsetRight: {x: 0.09, y: -0.05512518}
   colliderOffsetLeft: {x: -0.09, y: -0.05512518}
-  visualsTransform: {fileID: 8223545448675409767}
+--- !u!114 &3006945804537969592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061439023441306695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05ab946b1edfa4042bd350f1eee38df3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
+  jumpForce: 3
   groundCheck: {fileID: 6268499230493576737}
-  groundCheckRadius: 0.27
+  groundCheckRadius: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &325517082683871298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061439023441306695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11a83bebebf22bc4082ae2faad4514b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerClimb
+  climbSpeed: 3
+--- !u!114 &2233316860917331526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061439023441306695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 615df50517be1744eafc34b23c8035e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
   animator: {fileID: 1746667964442396133}
 --- !u!1 &2319139881790458734
 GameObject:
@@ -208,7 +272,7 @@ Transform:
   m_GameObject: {fileID: 2319139881790458734}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: -0.252, z: 0}
+  m_LocalPosition: {x: 0.1, y: -0.357, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

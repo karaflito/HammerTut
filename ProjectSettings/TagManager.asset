@@ -2,8 +2,9 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - Climbing
   layers:
   - Default
   - TransparentFX
@@ -11,8 +12,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Ground
+  - Cimbing
   - 
   - 
   - 
@@ -41,3 +42,23 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BackGround
+    uniqueID: 1496372331
+    locked: 0
+  - name: ForeGround
+    uniqueID: 52791091
+    locked: 0
+  - name: Decorations
+    uniqueID: 3054274681
+    locked: 0
+  - name: Climbing
+    uniqueID: 2768316165
+    locked: 0
+  - name: Enemy
+    uniqueID: 2803089909
+    locked: 0
+  - name: Player
+    uniqueID: 2012113269
+    locked: 0
+  m_RenderingLayers:
+  - Default

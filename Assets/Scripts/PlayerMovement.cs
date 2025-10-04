@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private PlayerData playerData;
 
     private Rigidbody2D rb;
     private PlayerInputHandler input;
@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Horizontal movement only
-        rb.linearVelocity = new Vector2(input.MoveInput * speed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(input.MoveInput * playerData.speed, rb.linearVelocity.y);
 
         HandleFlip();
     }

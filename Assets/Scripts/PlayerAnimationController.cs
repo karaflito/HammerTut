@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 [RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerAnimationController : MonoBehaviour
@@ -10,12 +11,14 @@ public class PlayerAnimationController : MonoBehaviour
     private PlayerInputHandler input;
     private Rigidbody2D rb;
     private PlayerClimb climb;
+    private PlayerJump jump;
 
     private void Awake()
     {
         input = GetComponent<PlayerInputHandler>();
         rb = GetComponent<Rigidbody2D>();
         climb = GetComponent<PlayerClimb>();
+        jump = GetComponent<PlayerJump>();
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
@@ -26,7 +29,11 @@ public class PlayerAnimationController : MonoBehaviour
         // =========================
         // Running
         // =========================
-        animator.SetBool("IsRunning", Mathf.Abs(input.MoveInput) > 0.1f);
+        
+        animator.SetBool("IsRunning", jump.isGrounded && Mathf.Abs(input.MoveInput) > 0.1f);
+          
+        
+        
 
         // =========================
         // Jumping / Falling

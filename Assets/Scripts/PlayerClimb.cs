@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerClimb : MonoBehaviour
 {
     [Header("Climb Settings")]
-    [SerializeField] private float climbSpeed = 1.0f;
+    [SerializeField] private PlayerData playerData;
 
     private Rigidbody2D rb;
     private PlayerInputHandler input;
@@ -15,12 +15,15 @@ public class PlayerClimb : MonoBehaviour
     private bool isNearClimbable;
     private float savedGravity;
 
+    private PlayerJump jump;
+
     public bool IsClimbing => isClimbing;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         input = GetComponent<PlayerInputHandler>();
         animator = GetComponentInChildren<Animator>();
+        jump = GetComponent<PlayerJump>();
     }
 
     private void FixedUpdate()
@@ -30,9 +33,17 @@ public class PlayerClimb : MonoBehaviour
             StartClimb();
         }
 
+
+        if(IsClimbing && input.ConsumeJumpPressed())
+        {
+            StopClimb();
+            jump.ForceJumpFromClimb();
+            return;
+        }
+
         if (isClimbing)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, input.ClimbInput * climbSpeed);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, input.ClimbInput * playerData.climbSpeed);
 
            
 
@@ -50,6 +61,7 @@ public class PlayerClimb : MonoBehaviour
         savedGravity = rb.gravityScale;
         rb.gravityScale = 0f;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+        
     }
 
     private void StopClimb()

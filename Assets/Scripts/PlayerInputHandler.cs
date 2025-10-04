@@ -57,7 +57,16 @@ public class PlayerInputHandler : MonoBehaviour
         JumpPressed = ctx.performed;
         
     }
-    
+
+    public bool ConsumeJumpPressed()
+    {
+        if (JumpPressed)
+        {
+            JumpPressed = false;
+            return true;
+        }
+        return false;
+    }
 
     private void OnClimb(InputAction.CallbackContext ctx)
     {

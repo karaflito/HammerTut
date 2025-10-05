@@ -9,6 +9,7 @@ public class PlayerInputHandler : MonoBehaviour
     public float MoveInput { get; private set; }
     public float ClimbInput { get; private set; }
     public bool JumpPressed { get; private set; }
+    public bool DashPressed { get; private set; }   
 
     private void Awake()
     {
@@ -28,6 +29,9 @@ public class PlayerInputHandler : MonoBehaviour
 
         actions.Player.Climbing.performed += OnClimb;
         actions.Player.Climbing.canceled += OnClimb;
+
+        actions.Player.Dash.performed += OnDash;
+        actions.Player.Dash.canceled += OnDash;
     }
 
     private void OnDisable()
@@ -42,6 +46,9 @@ public class PlayerInputHandler : MonoBehaviour
 
         actions.Player.Climbing.performed -= OnClimb;
         actions.Player.Climbing.canceled -= OnClimb;
+
+        actions.Player.Dash.performed -= OnDash;
+        actions.Player.Dash.canceled -= OnDash;
     }
 
     // ----------------------
@@ -56,6 +63,21 @@ public class PlayerInputHandler : MonoBehaviour
     {
         JumpPressed = ctx.performed;
         
+    }
+
+    private void OnDash(InputAction.CallbackContext ctx)
+    {
+        DashPressed = ctx.performed;
+    }
+    // NEW - Optional: Consume pattern for dash if you want
+    public bool ConsumeDashPressed()
+    {
+        if (DashPressed)
+        {
+            DashPressed = false;
+            return true;
+        }
+        return false;
     }
 
     public bool ConsumeJumpPressed()

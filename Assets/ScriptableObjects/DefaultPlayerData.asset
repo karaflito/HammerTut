@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   speed: 5
   maxVelocity: 10
-  jumpForce: 5
+  jumpForce: 6
   coyoteTime: 0.1
   groundCheckRadius: 0.2
-  normalGravity: 3
-  fallGravityMultiplier: 2
+  normalGravity: 1.5
+  fallGravityMultiplier: 2.3
   climbSpeed: 3
+  dashSpeed: 20
+  dashDuration: 0.2
+  dashCoolDown: 1

@@ -15,7 +15,7 @@ public class PlayerJump : MonoBehaviour
     private Rigidbody2D rb;
     private PlayerInputHandler input;
     private PlayerClimb climb;
-
+    private PlayerDash dash;
     public bool isGrounded { get; private set; }
 
     private void Awake()
@@ -23,6 +23,7 @@ public class PlayerJump : MonoBehaviour
         climb = GetComponent<PlayerClimb>();
         rb = GetComponent<Rigidbody2D>();
         input = GetComponent<PlayerInputHandler>();
+        dash = GetComponent<PlayerDash>();
     }
 
     private void Update()
@@ -83,14 +84,19 @@ public class PlayerJump : MonoBehaviour
 
     private void ApplyBetterGravity()
     {
+        // NEW: Check dash FIRST before anything else
+        PlayerDash dash = GetComponent<PlayerDash>();
+        if (dash != null && dash.IsDashing)
+        {
+            return; // Don't touch gravity during dash
+        }
+
         if (climb != null && climb.IsClimbing)
         {
-            
             return;
         }
-            
 
-        if(rb.linearVelocity.y < 0f)
+        if (rb.linearVelocity.y < 0f)
         {
             rb.gravityScale = playerData.normalGravity * playerData.fallGravityMultiplier;
         }

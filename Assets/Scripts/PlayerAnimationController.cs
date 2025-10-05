@@ -3,6 +3,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PlayerJump))]
+[RequireComponent(typeof(PlayerClimb))]
 public class PlayerAnimationController : MonoBehaviour
 {
     [Header("Animation")]

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
+    //new testing of commits
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2f;
     private bool movingRight = true;

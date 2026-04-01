@@ -20,6 +20,6 @@ MonoBehaviour:
   normalGravity: 1.5
   fallGravityMultiplier: 2.3
   climbSpeed: 3
-  dashSpeed: 20
+  dashSpeed: 10
   dashDuration: 0.2
-  dashCoolDown: 1
+  dashCoolDown: 0.7

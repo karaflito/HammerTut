@@ -68,6 +68,7 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnDash(InputAction.CallbackContext ctx)
     {
         DashPressed = ctx.performed;
+        Debug.Log($"Dash Pressed: {DashPressed}");
     }
     // NEW - Optional: Consume pattern for dash if you want
     public bool ConsumeDashPressed()

@@ -124,6 +124,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3663304123831857943, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
   m_PrefabInstance: {fileID: 9086383822440515491}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &668591212 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1061439023441306695, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+  m_PrefabInstance: {fileID: 9086383822440515491}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &668591223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668591212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d8f427d77ac3d84683327f27536498c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDash
+  playerData: {fileID: 11400000, guid: 910077f34f133ee4e8f78e6305c02bec, type: 2}
 --- !u!1 &882166532
 GameObject:
   m_ObjectHideFlags: 0
@@ -16771,7 +16789,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1061439023441306695, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 668591223}
   m_SourcePrefab: {fileID: 100100000, guid: ea74d49e69186c64a926391bac797bf9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

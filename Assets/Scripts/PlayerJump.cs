@@ -88,6 +88,7 @@ public class PlayerJump : MonoBehaviour
         PlayerDash dash = GetComponent<PlayerDash>();
         if (dash != null && dash.IsDashing)
         {
+            Debug.Log("PlayerJump: Skipping gravity - dashing"); // DEBUG
             return; // Don't touch gravity during dash
         }
 

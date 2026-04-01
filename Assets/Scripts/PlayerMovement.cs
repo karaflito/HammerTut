@@ -24,14 +24,14 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Horizontal movement only
-        rb.linearVelocity = new Vector2(input.MoveInput * playerData.speed, rb.linearVelocity.y);
+        
         if (dash != null && dash.IsDashing)
         {
             // Still handle flip during dash
             HandleFlip();
             return;
         }
-
+        rb.linearVelocity = new Vector2(input.MoveInput * playerData.speed, rb.linearVelocity.y);
         HandleFlip();
     }
 

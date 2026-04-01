@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private PlayerInputHandler input;
     private Flippable flippable;
-
+    private PlayerDash dash;
     private bool facingRight = true;
 
     private void Awake()
@@ -18,13 +18,20 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         input = GetComponent<PlayerInputHandler>();
         flippable = GetComponent<Flippable>();
+        dash = GetComponent<PlayerDash>();
     }
 
     private void FixedUpdate()
     {
         // Horizontal movement only
+        
+        if (dash != null && dash.IsDashing)
+        {
+            // Still handle flip during dash
+            HandleFlip();
+            return;
+        }
         rb.linearVelocity = new Vector2(input.MoveInput * playerData.speed, rb.linearVelocity.y);
-
         HandleFlip();
     }
 

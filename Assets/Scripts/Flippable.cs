@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class Flippable : MonoBehaviour
@@ -17,10 +17,20 @@ public class Flippable : MonoBehaviour
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>(); // expects collider on the root
+
+        if (visualsTransform == null)
+        {
+            visualsTransform = transform;
+        }
     }
 
     public void StartSmoothFlip(bool faceRight)
     {
+        if (visualsTransform == null)
+        {
+            return;
+        }
+
         if (flipCoroutine != null)
             StopCoroutine(flipCoroutine);
 
@@ -32,7 +42,7 @@ public class Flippable : MonoBehaviour
 
     private IEnumerator SmoothFlip(bool faceRight)
     {
-        // Smoothly lerp the child�s X scale from current to target (+1 or -1)
+        // Smoothly lerp the child’s X scale from current to target (+1 or -1)
         float start = visualsTransform.localScale.x;
         float end = faceRight ? 1f : -1f;
         float t = 0f;
@@ -49,3 +59,4 @@ public class Flippable : MonoBehaviour
         flipCoroutine = null;
     }
 }
+

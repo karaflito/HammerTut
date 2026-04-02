@@ -5,11 +5,11 @@ public class PlayerInputHandler : MonoBehaviour
 {
     private PlayerInputActions actions;
 
-    // Public properties that other scripts can read
     public float MoveInput { get; private set; }
     public float ClimbInput { get; private set; }
-    public bool JumpPressed { get; private set; }
-    public bool DashPressed { get; private set; }   
+
+    private bool jumpPressed;
+    private bool dashPressed;
 
     private void Awake()
     {
@@ -20,79 +20,75 @@ public class PlayerInputHandler : MonoBehaviour
     {
         actions.Player.Enable();
 
-        // Subscribe to input callbacks
         actions.Player.Move.performed += OnMove;
         actions.Player.Move.canceled += OnMove;
-
-        actions.Player.Jump.performed += OnJump;
-        actions.Player.Jump.canceled += OnJump;
 
         actions.Player.Climbing.performed += OnClimb;
         actions.Player.Climbing.canceled += OnClimb;
 
+        actions.Player.Jump.performed += OnJump;
         actions.Player.Dash.performed += OnDash;
-        actions.Player.Dash.canceled += OnDash;
     }
 
     private void OnDisable()
     {
-        actions.Player.Disable();
-
         actions.Player.Move.performed -= OnMove;
         actions.Player.Move.canceled -= OnMove;
-
-        actions.Player.Jump.performed -= OnJump;
-        actions.Player.Jump.canceled -= OnJump;
 
         actions.Player.Climbing.performed -= OnClimb;
         actions.Player.Climbing.canceled -= OnClimb;
 
+        actions.Player.Jump.performed -= OnJump;
         actions.Player.Dash.performed -= OnDash;
-        actions.Player.Dash.canceled -= OnDash;
+
+        actions.Player.Disable();
     }
 
-    // ----------------------
-    // Input Callbacks
-    // ----------------------
-    private void OnMove(InputAction.CallbackContext ctx)
+    private void OnMove(InputAction.CallbackContext context)
     {
-        MoveInput = ctx.ReadValue<float>();
+        MoveInput = context.ReadValue<float>();
     }
 
-    private void OnJump(InputAction.CallbackContext ctx)
+    private void OnClimb(InputAction.CallbackContext context)
     {
-        JumpPressed = ctx.performed;
-        
+        ClimbInput = context.ReadValue<float>();
     }
 
-    private void OnDash(InputAction.CallbackContext ctx)
+    private void OnJump(InputAction.CallbackContext context)
     {
-        DashPressed = ctx.performed;
-        Debug.Log($"Dash Pressed: {DashPressed}");
-    }
-    // NEW - Optional: Consume pattern for dash if you want
-    public bool ConsumeDashPressed()
-    {
-        if (DashPressed)
+        if (context.performed)
         {
-            DashPressed = false;
-            return true;
+            jumpPressed = true;
         }
-        return false;
+    }
+
+    private void OnDash(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            dashPressed = true;
+        }
     }
 
     public bool ConsumeJumpPressed()
     {
-        if (JumpPressed)
+        if (!jumpPressed)
         {
-            JumpPressed = false;
-            return true;
+            return false;
         }
-        return false;
+
+        jumpPressed = false;
+        return true;
     }
 
-    private void OnClimb(InputAction.CallbackContext ctx)
+    public bool ConsumeDashPressed()
     {
-        ClimbInput = ctx.ReadValue<float>();
+        if (!dashPressed)
+        {
+            return false;
+        }
+
+        dashPressed = false;
+        return true;
     }
 }

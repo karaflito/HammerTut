@@ -1,60 +1,42 @@
 using UnityEngine;
 
-
 [RequireComponent(typeof(PlayerInputHandler))]
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PlayerJump))]
-[RequireComponent(typeof(PlayerClimb))]
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerAnimationController : MonoBehaviour
 {
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
     private PlayerInputHandler input;
-    private Rigidbody2D rb;
-    private PlayerClimb climb;
-    private PlayerJump jump;
+    private PlayerMovement movement;
 
     private void Awake()
     {
         input = GetComponent<PlayerInputHandler>();
-        rb = GetComponent<Rigidbody2D>();
-        climb = GetComponent<PlayerClimb>();
-        jump = GetComponent<PlayerJump>();
+        movement = GetComponent<PlayerMovement>();
 
         if (animator == null)
+        {
             animator = GetComponentInChildren<Animator>();
+        }
     }
 
     private void Update()
     {
-        // =========================
-        // Running
-        // =========================
-        
-        animator.SetBool("IsRunning", jump.isGrounded && Mathf.Abs(input.MoveInput) > 0.1f);
-          
-        
-        
-
-        // =========================
-        // Jumping / Falling
-        // =========================
-        animator.SetBool("IsJumping", rb.linearVelocity.y > 0.1f);
-        animator.SetBool("IsFalling", rb.linearVelocity.y < -0.1f);
-
-        // =========================
-        // Climbing
-        // =========================
-        if (climb.IsClimbing)
+        if (animator == null)
         {
-            animator.SetBool("IsClimbing", true);
-            animator.SetFloat("ClimbSpeed", Mathf.Abs(input.ClimbInput));
+            return;
         }
-        else
-        {
-            animator.SetBool("IsClimbing", false);
-            animator.SetFloat("ClimbSpeed", 0f);
-        }
+
+        bool isRunning = movement.CurrentStateId == PlayerStateId.Grounded && Mathf.Abs(input.MoveInput) > 0.1f;
+        bool isJumping = movement.CurrentStateId == PlayerStateId.Airborne && movement.Velocity.y > 0.1f;
+        bool isFalling = movement.CurrentStateId == PlayerStateId.Airborne && movement.Velocity.y < -0.1f;
+        bool isClimbing = movement.CurrentStateId == PlayerStateId.Climbing;
+
+        animator.SetBool("IsRunning", isRunning);
+        animator.SetBool("IsJumping", isJumping);
+        animator.SetBool("IsFalling", isFalling);
+        animator.SetBool("IsClimbing", isClimbing);
+        animator.SetFloat("ClimbSpeed", isClimbing ? Mathf.Abs(input.ClimbInput) : 0f);
     }
 }

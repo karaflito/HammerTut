@@ -10,7 +10,6 @@ public class PlayerData : ScriptableObject
     [Header("Jump Settings")]
     public float jumpForce = 5f;
     public float coyoteTime = 0.1f;
-    public float groundCheckRadius = 0.2f;
 
     [Header("Gravity Settings")]
     public float normalGravity = 3f;

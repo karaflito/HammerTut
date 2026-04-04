@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMotor : MonoBehaviour
 {
-    private const float InputDeadZone = 0.01f;
+    public const float InputDeadZone = 0.01f;
 
     private Rigidbody2D rb;
     private Flippable flippable;

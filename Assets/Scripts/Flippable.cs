@@ -13,6 +13,7 @@ public class Flippable : MonoBehaviour
 
     private BoxCollider2D boxCollider;
     private Coroutine flipCoroutine;
+    private float baseScaleX;
 
     private void Awake()
     {
@@ -22,6 +23,8 @@ public class Flippable : MonoBehaviour
         {
             visualsTransform = transform;
         }
+
+        baseScaleX = Mathf.Abs(visualsTransform.localScale.x);
     }
 
     public void StartSmoothFlip(bool faceRight)
@@ -42,20 +45,21 @@ public class Flippable : MonoBehaviour
 
     private IEnumerator SmoothFlip(bool faceRight)
     {
-        // Smoothly lerp the child’s X scale from current to target (+1 or -1)
-        float start = visualsTransform.localScale.x;
-        float end = faceRight ? 1f : -1f;
+        Vector3 scale = visualsTransform.localScale;
+        float start = scale.x;
+        float end = faceRight ? baseScaleX : -baseScaleX;
         float t = 0f;
 
         while (t < flipDuration)
         {
-            float x = Mathf.Lerp(start, end, t / flipDuration);
-            visualsTransform.localScale = new Vector3(x, 1f, 1f);
+            scale.x = Mathf.Lerp(start, end, t / flipDuration);
+            visualsTransform.localScale = scale;
             t += Time.deltaTime;
             yield return null;
         }
 
-        visualsTransform.localScale = new Vector3(end, 1f, 1f);
+        scale.x = end;
+        visualsTransform.localScale = scale;
         flipCoroutine = null;
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMotor))]
 public class PlayerMovement : MonoBehaviour
 {
-    private const float InputDeadZone = 0.01f;
     private const float ClimbReentryLockDuration = 0.15f;
 
     [Header("Movement Settings")]
@@ -51,18 +50,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        UpdateCoyoteTime();
-
-        if (dashCooldownRemaining > 0f)
-        {
-            dashCooldownRemaining -= Time.deltaTime;
-        }
-
-        if (climbReentryLockRemaining > 0f)
-        {
-            climbReentryLockRemaining -= Time.deltaTime;
-        }
-
         switch (CurrentStateId)
         {
             case PlayerStateId.Grounded:
@@ -82,6 +69,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        UpdateTimers();
+
         switch (CurrentStateId)
         {
             case PlayerStateId.Grounded:
@@ -97,6 +86,19 @@ public class PlayerMovement : MonoBehaviour
                 FixedTickDashing();
                 break;
         }
+    }
+
+    private void UpdateTimers()
+    {
+        float dt = Time.fixedDeltaTime;
+
+        if (dashCooldownRemaining > 0f)
+            dashCooldownRemaining -= dt;
+
+        if (climbReentryLockRemaining > 0f)
+            climbReentryLockRemaining -= dt;
+
+        UpdateCoyoteTime(dt);
     }
 
     private void TickGrounded()
@@ -198,8 +200,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void TickDashing()
     {
-        dashTimeRemaining -= Time.deltaTime;
-
         if (dashTimeRemaining > 0f)
         {
             return;
@@ -216,6 +216,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedTickDashing()
     {
+        dashTimeRemaining -= Time.fixedDeltaTime;
         motor.SetGravityScale(0f);
         motor.SetVelocity(dashDirection * playerData.dashSpeed);
     }
@@ -304,14 +305,13 @@ public class PlayerMovement : MonoBehaviour
     private void PerformJump()
     {
         motor.SetGravityScale(playerData.normalGravity);
-        motor.ResetVerticalVelocity();
-        motor.AddImpulse(Vector2.up * playerData.jumpForce);
+        motor.SetVerticalSpeed(playerData.jumpForce);
         coyoteTimeRemaining = 0f;
     }
 
     private Vector2 ResolveDashDirection()
     {
-        if (Mathf.Abs(input.MoveInput) > InputDeadZone)
+        if (Mathf.Abs(input.MoveInput) > PlayerMotor.InputDeadZone)
         {
             float direction = Mathf.Sign(input.MoveInput);
             motor.FaceDirection(direction);
@@ -325,7 +325,7 @@ public class PlayerMovement : MonoBehaviour
     {
         return climbReentryLockRemaining <= 0f
             && sensors.IsNearClimbable
-            && Mathf.Abs(input.ClimbInput) > InputDeadZone;
+            && Mathf.Abs(input.ClimbInput) > PlayerMotor.InputDeadZone;
     }
 
     private void LockClimbReentry()
@@ -333,7 +333,7 @@ public class PlayerMovement : MonoBehaviour
         climbReentryLockRemaining = ClimbReentryLockDuration;
     }
 
-    private void UpdateCoyoteTime()
+    private void UpdateCoyoteTime(float dt)
     {
         if (CurrentStateId == PlayerStateId.Climbing)
         {
@@ -349,7 +349,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (coyoteTimeRemaining > 0f)
         {
-            coyoteTimeRemaining -= Time.deltaTime;
+            coyoteTimeRemaining -= dt;
         }
     }
 }

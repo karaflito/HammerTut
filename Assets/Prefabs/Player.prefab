@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 956910200892657503}
   - component: {fileID: 6011499619285234035}
   - component: {fileID: 7417151996246298853}
-  - component: {fileID: 3006945804537969592}
-  - component: {fileID: 325517082683871298}
   - component: {fileID: 2233316860917331526}
+  - component: {fileID: 6021253800925432010}
+  - component: {fileID: 2697019765605552579}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4696937e10289174ab231e98662832ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  speed: 5
+  playerData: {fileID: 11400000, guid: 910077f34f133ee4e8f78e6305c02bec, type: 2}
 --- !u!114 &6011499619285234035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,37 +203,6 @@ MonoBehaviour:
   flipDuration: 0.2
   colliderOffsetRight: {x: 0.09, y: -0.05512518}
   colliderOffsetLeft: {x: -0.09, y: -0.05512518}
---- !u!114 &3006945804537969592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1061439023441306695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05ab946b1edfa4042bd350f1eee38df3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
-  jumpForce: 3
-  groundCheck: {fileID: 6268499230493576737}
-  groundCheckRadius: 0.2
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
---- !u!114 &325517082683871298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1061439023441306695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11a83bebebf22bc4082ae2faad4514b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerClimb
-  climbSpeed: 3
 --- !u!114 &2233316860917331526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,6 +216,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
   animator: {fileID: 1746667964442396133}
+--- !u!114 &6021253800925432010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061439023441306695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13528808ccd3c17489dfc1193f520d7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSensors
+  groundCheck: {fileID: 6268499230493576737}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckRadius: 0.2
+  climbableTag: Climbing
+--- !u!114 &2697019765605552579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061439023441306695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf7840aa6ae19864cb85f46270ced002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMotor
 --- !u!1 &2319139881790458734
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,6 +312,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5164036231295116044
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -358,6 +358,7 @@ SpriteRenderer:
   m_SortingLayerID: 2012113269
   m_SortingLayer: 6
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -3329629929579024788, guid: d13e8f32cc75f7b4289ede995f724a38, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -367,7 +368,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &1746667964442396133
 Animator:

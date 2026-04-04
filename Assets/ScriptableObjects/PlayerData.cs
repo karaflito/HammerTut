@@ -5,7 +5,6 @@ public class PlayerData : ScriptableObject
 {
     [Header("Movement Settings")]
     public float speed = 5f;
-    public float maxVelocity = 10f;
 
     [Header("Jump Settings")]
     public float jumpForce = 5f;
@@ -22,15 +21,4 @@ public class PlayerData : ScriptableObject
     public float dashSpeed = 20f;
     public float dashDuration = 0.2f;
     public float dashCoolDown = 1f;
-
-
-
-
-
-
-
-
-
-
-
 }

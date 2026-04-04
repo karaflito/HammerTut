@@ -3,13 +3,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputHandler : MonoBehaviour
 {
+    private const float InputBufferDuration = 0.1f;
+
     private PlayerInputActions actions;
 
     public float MoveInput { get; private set; }
     public float ClimbInput { get; private set; }
 
-    private bool jumpPressed;
-    private bool dashPressed;
+    private float jumpBufferRemaining;
+    private float dashBufferRemaining;
 
     private void Awake()
     {
@@ -54,41 +56,44 @@ public class PlayerInputHandler : MonoBehaviour
         ClimbInput = context.ReadValue<float>();
     }
 
+    private void Update()
+    {
+        if (jumpBufferRemaining > 0f)
+            jumpBufferRemaining -= Time.deltaTime;
+
+        if (dashBufferRemaining > 0f)
+            dashBufferRemaining -= Time.deltaTime;
+    }
+
     private void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
-            jumpPressed = true;
-        }
+        jumpBufferRemaining = InputBufferDuration;
     }
 
     private void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
-            dashPressed = true;
-        }
+        dashBufferRemaining = InputBufferDuration;
     }
 
     public bool ConsumeJumpPressed()
     {
-        if (!jumpPressed)
+        if (jumpBufferRemaining <= 0f)
         {
             return false;
         }
 
-        jumpPressed = false;
+        jumpBufferRemaining = 0f;
         return true;
     }
 
     public bool ConsumeDashPressed()
     {
-        if (!dashPressed)
+        if (dashBufferRemaining <= 0f)
         {
             return false;
         }
 
-        dashPressed = false;
+        dashBufferRemaining = 0f;
         return true;
     }
 }

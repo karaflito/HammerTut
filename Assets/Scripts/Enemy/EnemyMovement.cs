@@ -5,6 +5,7 @@ public class EnemyMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private bool startMovingRight = true;
 
     [Header("Ground and Wall Detection")]
     [SerializeField] private Transform groundCheck;
@@ -13,12 +14,14 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float checkRadius = 0.1f;
 
     private Rigidbody2D rb;
-    private bool movingRight = true;
+    private bool movingRight;
     private bool hasLoggedMissingChecks;
+    private float flipCooldown;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        movingRight = startMovingRight;
     }
 
     private void FixedUpdate()
@@ -37,13 +40,19 @@ public class EnemyMovement : MonoBehaviour
 
         rb.linearVelocity = new Vector2((movingRight ? 1f : -1f) * moveSpeed, rb.linearVelocity.y);
 
-        hasLoggedMissingChecks = false;
+        if (flipCooldown > 0f)
+        {
+            flipCooldown -= Time.fixedDeltaTime;
+            return;
+        }
+
         bool wallAhead = Physics2D.OverlapCircle(wallCheck.position, checkRadius, groundLayer);
         bool groundAhead = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
 
         if (wallAhead || !groundAhead)
         {
             Flip();
+            flipCooldown = 0.15f;
         }
     }
 
@@ -52,7 +61,7 @@ public class EnemyMovement : MonoBehaviour
         movingRight = !movingRight;
 
         Vector3 localScale = transform.localScale;
-        localScale.x *= -1f;
+        localScale.x = -localScale.x;
         transform.localScale = localScale;
     }
 

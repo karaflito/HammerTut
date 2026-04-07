@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -10,90 +11,123 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private PlayerData playerData;
 
-    private PlayerInputHandler input;
-    private PlayerSensors sensors;
-    private PlayerMotor motor;
-
-    private float coyoteTimeRemaining;
-    private float dashTimeRemaining;
-    private float dashCooldownRemaining;
+    private Dictionary<PlayerStateId, PlayerState> states;
+    private PlayerState currentState;
     private float climbReentryLockRemaining;
-    private Vector2 dashDirection;
     private bool stateInitialized;
-    private bool suppressNextAirJump;
+
+    public PlayerInputHandler Input { get; private set; }
+    public PlayerSensors Sensors { get; private set; }
+    public PlayerMotor Motor { get; private set; }
+    public PlayerData Data => playerData;
 
     public PlayerStateId CurrentStateId { get; private set; }
-    public bool IsGrounded => sensors != null && sensors.IsGrounded;
+    public bool IsGrounded => Sensors != null && Sensors.IsGrounded;
     public bool IsClimbing => CurrentStateId == PlayerStateId.Climbing;
     public bool IsDashing => CurrentStateId == PlayerStateId.Dashing;
-    public bool CanDash => dashCooldownRemaining <= 0f && !IsDashing;
-    public Vector2 Velocity => motor != null ? motor.Velocity : Vector2.zero;
+    public bool CanDash => DashCooldownRemaining <= 0f && !IsDashing;
+    public Vector2 Velocity => Motor != null ? Motor.Velocity : Vector2.zero;
+
+    public float CoyoteTimeRemaining { get; set; }
+    public float DashCooldownRemaining { get; set; }
+    public bool SuppressNextAirJump { get; set; }
 
     private void Awake()
     {
-        input = GetComponent<PlayerInputHandler>();
-        sensors = GetComponent<PlayerSensors>();
-        motor = GetComponent<PlayerMotor>();
+        Input = GetComponent<PlayerInputHandler>();
+        Sensors = GetComponent<PlayerSensors>();
+        Motor = GetComponent<PlayerMotor>();
 
         if (playerData == null)
         {
             Debug.LogError("PlayerMovement requires a PlayerData asset.", this);
             enabled = false;
+            return;
         }
+
+        states = new Dictionary<PlayerStateId, PlayerState>
+        {
+            { PlayerStateId.Grounded, new GroundedState(this) },
+            { PlayerStateId.Airborne, new AirborneState(this) },
+            { PlayerStateId.Climbing, new ClimbingState(this) },
+            { PlayerStateId.Dashing, new DashingState(this) }
+        };
     }
 
     private void Start()
     {
-        sensors.Refresh();
-        SetState(sensors.IsGrounded ? PlayerStateId.Grounded : PlayerStateId.Airborne);
+        Sensors.Refresh();
+        SetState(Sensors.IsGrounded ? PlayerStateId.Grounded : PlayerStateId.Airborne);
     }
 
     private void Update()
     {
-        switch (CurrentStateId)
-        {
-            case PlayerStateId.Grounded:
-                TickGrounded();
-                break;
-            case PlayerStateId.Airborne:
-                TickAirborne();
-                break;
-            case PlayerStateId.Climbing:
-                TickClimbing();
-                break;
-            case PlayerStateId.Dashing:
-                TickDashing();
-                break;
-        }
+        currentState?.Tick();
     }
 
     private void FixedUpdate()
     {
         UpdateTimers();
+        currentState?.FixedTick();
+    }
 
-        switch (CurrentStateId)
+    public void SetState(PlayerStateId newStateId)
+    {
+        if (stateInitialized && CurrentStateId == newStateId)
+            return;
+
+        if (stateInitialized)
+            currentState?.Exit();
+
+        PlayerStateId previousId = CurrentStateId;
+        CurrentStateId = newStateId;
+        currentState = states[newStateId];
+        currentState.Enter(stateInitialized ? previousId : newStateId);
+        stateInitialized = true;
+    }
+
+    public void PerformJump()
+    {
+        Motor.SetGravityScale(playerData.normalGravity);
+        Motor.SetVerticalSpeed(playerData.jumpForce);
+        CoyoteTimeRemaining = 0f;
+    }
+
+    public void ApplyHorizontalMovement()
+    {
+        Motor.SetHorizontalSpeed(Input.MoveInput * playerData.speed);
+        Motor.FaceDirection(Input.MoveInput);
+    }
+
+    public void ApplyAirGravity()
+    {
+        if (Motor.Velocity.y < 0f)
         {
-            case PlayerStateId.Grounded:
-                FixedTickGrounded();
-                break;
-            case PlayerStateId.Airborne:
-                FixedTickAirborne();
-                break;
-            case PlayerStateId.Climbing:
-                FixedTickClimbing();
-                break;
-            case PlayerStateId.Dashing:
-                FixedTickDashing();
-                break;
+            Motor.SetGravityScale(playerData.normalGravity * playerData.fallGravityMultiplier);
+            return;
         }
+
+        Motor.SetGravityScale(playerData.normalGravity);
+    }
+
+    public bool ShouldStartClimb()
+    {
+        return climbReentryLockRemaining <= 0f
+            && Sensors.IsNearClimbable
+            && Mathf.Abs(Input.ClimbInput) > PlayerMotor.InputDeadZone;
+    }
+
+    public void LockClimbReentry()
+    {
+        climbReentryLockRemaining = ClimbReentryLockDuration;
     }
 
     private void UpdateTimers()
     {
         float dt = Time.fixedDeltaTime;
 
-        if (dashCooldownRemaining > 0f)
-            dashCooldownRemaining -= dt;
+        if (DashCooldownRemaining > 0f)
+            DashCooldownRemaining -= dt;
 
         if (climbReentryLockRemaining > 0f)
             climbReentryLockRemaining -= dt;
@@ -101,255 +135,19 @@ public class PlayerMovement : MonoBehaviour
         UpdateCoyoteTime(dt);
     }
 
-    private void TickGrounded()
-    {
-        if (!sensors.IsGrounded)
-        {
-            SetState(PlayerStateId.Airborne);
-            return;
-        }
-
-        if (input.ConsumeDashPressed() && CanDash)
-        {
-            SetState(PlayerStateId.Dashing);
-            return;
-        }
-
-        if (ShouldStartClimb())
-        {
-            SetState(PlayerStateId.Climbing);
-            return;
-        }
-
-        if (input.ConsumeJumpPressed())
-        {
-            PerformJump();
-            SetState(PlayerStateId.Airborne);
-        }
-    }
-
-    private void FixedTickGrounded()
-    {
-        ApplyHorizontalMovement();
-        motor.SetGravityScale(playerData.normalGravity);
-    }
-
-    private void TickAirborne()
-    {
-        if (input.ConsumeDashPressed() && CanDash)
-        {
-            SetState(PlayerStateId.Dashing);
-            return;
-        }
-
-        if (ShouldStartClimb())
-        {
-            SetState(PlayerStateId.Climbing);
-            return;
-        }
-
-        if (input.ConsumeJumpPressed() && coyoteTimeRemaining > 0f && !suppressNextAirJump)
-        {
-            PerformJump();
-            coyoteTimeRemaining = 0f;
-            return;
-        }
-
-        if (sensors.IsGrounded && motor.Velocity.y <= 0f)
-        {
-            SetState(PlayerStateId.Grounded);
-        }
-    }
-
-    private void FixedTickAirborne()
-    {
-        ApplyHorizontalMovement();
-        ApplyAirGravity();
-    }
-
-    private void TickClimbing()
-    {
-        if (!sensors.IsNearClimbable)
-        {
-            SetState(sensors.IsGrounded ? PlayerStateId.Grounded : PlayerStateId.Airborne);
-            return;
-        }
-
-        if (input.ConsumeDashPressed() && CanDash)
-        {
-            SetState(PlayerStateId.Dashing);
-            return;
-        }
-
-        if (input.ConsumeJumpPressed())
-        {
-            PerformJump();
-            LockClimbReentry();
-            suppressNextAirJump = false;
-            SetState(PlayerStateId.Airborne);
-        }
-    }
-
-    private void FixedTickClimbing()
-    {
-        motor.SetGravityScale(0f);
-        motor.SetHorizontalSpeed(input.MoveInput * playerData.speed);
-        motor.FaceDirection(input.MoveInput);
-        motor.SetVerticalSpeed(input.ClimbInput * playerData.climbSpeed);
-    }
-
-    private void TickDashing()
-    {
-        if (dashTimeRemaining > 0f)
-        {
-            return;
-        }
-
-        if (ShouldStartClimb())
-        {
-            SetState(PlayerStateId.Climbing);
-            return;
-        }
-
-        SetState(sensors.IsGrounded ? PlayerStateId.Grounded : PlayerStateId.Airborne);
-    }
-
-    private void FixedTickDashing()
-    {
-        dashTimeRemaining -= Time.fixedDeltaTime;
-        motor.SetGravityScale(0f);
-        motor.SetVelocity(dashDirection * playerData.dashSpeed);
-    }
-
-    private void SetState(PlayerStateId newState)
-    {
-        if (stateInitialized && CurrentStateId == newState)
-        {
-            return;
-        }
-
-        PlayerStateId previousState = CurrentStateId;
-        if (stateInitialized)
-        {
-            ExitState(previousState);
-        }
-
-        CurrentStateId = newState;
-        EnterState(stateInitialized ? previousState : newState, newState);
-        stateInitialized = true;
-    }
-
-    private void EnterState(PlayerStateId previousState, PlayerStateId newState)
-    {
-        switch (newState)
-        {
-            case PlayerStateId.Grounded:
-                motor.SetGravityScale(playerData.normalGravity);
-                break;
-
-            case PlayerStateId.Airborne:
-                if (previousState == PlayerStateId.Climbing)
-                {
-                    suppressNextAirJump = true;
-                    coyoteTimeRemaining = 0f;
-                }
-                break;
-
-            case PlayerStateId.Climbing:
-                suppressNextAirJump = false;
-                motor.SetGravityScale(0f);
-                motor.SetVerticalSpeed(0f);
-                break;
-
-            case PlayerStateId.Dashing:
-                suppressNextAirJump = false;
-                dashTimeRemaining = playerData.dashDuration;
-                dashCooldownRemaining = playerData.dashCoolDown;
-                dashDirection = ResolveDashDirection();
-                motor.SetGravityScale(0f);
-                motor.SetVelocity(dashDirection * playerData.dashSpeed);
-                break;
-        }
-    }
-
-    private void ExitState(PlayerStateId oldState)
-    {
-        if (oldState == PlayerStateId.Climbing || oldState == PlayerStateId.Dashing)
-        {
-            motor.SetGravityScale(playerData.normalGravity);
-        }
-
-        if (oldState == PlayerStateId.Grounded)
-        {
-            suppressNextAirJump = false;
-        }
-    }
-
-    private void ApplyHorizontalMovement()
-    {
-        motor.SetHorizontalSpeed(input.MoveInput * playerData.speed);
-        motor.FaceDirection(input.MoveInput);
-    }
-
-    private void ApplyAirGravity()
-    {
-        if (motor.Velocity.y < 0f)
-        {
-            motor.SetGravityScale(playerData.normalGravity * playerData.fallGravityMultiplier);
-            return;
-        }
-
-        motor.SetGravityScale(playerData.normalGravity);
-    }
-
-    private void PerformJump()
-    {
-        motor.SetGravityScale(playerData.normalGravity);
-        motor.SetVerticalSpeed(playerData.jumpForce);
-        coyoteTimeRemaining = 0f;
-    }
-
-    private Vector2 ResolveDashDirection()
-    {
-        if (Mathf.Abs(input.MoveInput) > PlayerMotor.InputDeadZone)
-        {
-            float direction = Mathf.Sign(input.MoveInput);
-            motor.FaceDirection(direction);
-            return new Vector2(direction, 0f);
-        }
-
-        return new Vector2(motor.FacingSign, 0f);
-    }
-
-    private bool ShouldStartClimb()
-    {
-        return climbReentryLockRemaining <= 0f
-            && sensors.IsNearClimbable
-            && Mathf.Abs(input.ClimbInput) > PlayerMotor.InputDeadZone;
-    }
-
-    private void LockClimbReentry()
-    {
-        climbReentryLockRemaining = ClimbReentryLockDuration;
-    }
-
     private void UpdateCoyoteTime(float dt)
     {
         if (CurrentStateId == PlayerStateId.Climbing)
+            return;
+
+        if (Sensors.IsGrounded)
         {
+            CoyoteTimeRemaining = playerData.coyoteTime;
+            SuppressNextAirJump = false;
             return;
         }
 
-        if (sensors.IsGrounded)
-        {
-            coyoteTimeRemaining = playerData.coyoteTime;
-            suppressNextAirJump = false;
-            return;
-        }
-
-        if (coyoteTimeRemaining > 0f)
-        {
-            coyoteTimeRemaining -= dt;
-        }
+        if (CoyoteTimeRemaining > 0f)
+            CoyoteTimeRemaining -= dt;
     }
 }

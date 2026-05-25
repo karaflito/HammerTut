@@ -6,6 +6,8 @@ public class PlayerSensors : MonoBehaviour
     [Header("Ground Check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+    [Tooltip("Extra layers the player can stand on and jump off, e.g. enemy heads.")]
+    [SerializeField] private LayerMask standableLayers;
     [SerializeField] private float groundCheckRadius = 0.2f;
 
     [Header("Climb Check")]
@@ -46,7 +48,7 @@ public class PlayerSensors : MonoBehaviour
         }
 
         hasWarnedAboutMissingGroundCheck = false;
-        IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer | standableLayers);
     }
 
     private void TryAutoAssignGroundCheck()

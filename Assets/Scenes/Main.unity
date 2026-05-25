@@ -16187,6 +16187,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5095150203961933359, guid: 1d3baa5d25fcdeb41a4c5fe224a832a1, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5095150203961933359, guid: 1d3baa5d25fcdeb41a4c5fe224a832a1, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -840166333
+      objectReference: {fileID: 0}
     - target: {fileID: 5733989639511333269, guid: 1d3baa5d25fcdeb41a4c5fe224a832a1, type: 3}
       propertyPath: m_Name
       value: Enemy
